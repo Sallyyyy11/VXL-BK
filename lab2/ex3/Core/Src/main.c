@@ -263,12 +263,12 @@ switch (index){
 }
 
 
-int counter = 50;
+int counter = 25;
 int countDOT = 100;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 	counter--;
     if(counter <= 0){
-        counter = 50;
+        counter = 25;
 
 		HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
 
