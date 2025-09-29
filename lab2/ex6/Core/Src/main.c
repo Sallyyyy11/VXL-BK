@@ -150,7 +150,7 @@ switch (index){
 	 }
 }
 
-int hour = 15 , minute = 8 , second = 59;
+int hour = 15 , minute = 8 , second = 50;
 void updateClockBuffer(){
 	 led_buffer[0] = hour / 10;
 	 led_buffer[1] = hour % 10;
@@ -170,7 +170,7 @@ int main(void)
 
 HAL_TIM_Base_Start_IT(&htim2);
 
-setTimer0(1000);
+setTimer0(10);
 setTimer1(10);
 while (1)
   {
@@ -200,7 +200,7 @@ while (1)
 	  update7SEG(index_led);
 	  index_led++;
 	  if(index_led>= MAX_LED) index_led = 0;
-	  setTimer1(10);
+	  setTimer1(250);
 	}
   }
 }
