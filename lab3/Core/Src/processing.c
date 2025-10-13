@@ -10,6 +10,11 @@ int green_time = 3;
 int yellow_time = 2;
 int red_time = 5;
 
+// ----- Temporary variables for "cancel" functionality -----
+int temp_red_time = 0;
+int temp_yellow_time = 0;
+int temp_green_time = 0;
+
 // traffic state
 int traffic_state = 0; // 0=G1_R2, 1=Y1_R2, 2=R1_G2, 3=R1_Y2
 int counter1 = 0;      // countdown
@@ -25,14 +30,47 @@ void fsm_for_processing(void)
     {
         case BUTTON_RELEASED:
             if (is_button_pressed(0)) {
-                buttonState = BUTTON_PRESSED;
-                mode++;
-                if (mode > 4) mode = 1; // quay vòng 1-4
-                // Reset timer for new mode
-                if (mode == 1) setTimer0(1000);
-                else setTimer0(250); // For blink in modes 2-4
+            	 buttonState = BUTTON_PRESSED;
+            	 // **CANCEL LOGIC: If leaving a mod mode without saving, restore the old value**
+            	 if (mode == 2) {
+            	 red_time = temp_red_time;
+            	 // Recalculate dependent values
+            	 yellow_time = red_time - green_time;
+            	 }
+            	 else if (mode == 3) {
+            	 yellow_time = temp_yellow_time;
+            	 red_time = green_time + yellow_time;
+            	 }
+            	 else if (mode == 4) {
+            	 green_time = temp_green_time;
+            	 red_time = green_time + yellow_time;
+            	 }
+
+            	 // Proceed with the mode change
+            	 mode++;
+            	 if (mode > 4) mode = 1;
+
+            	 // **SAVE LOGIC: When entering a new mod mode, save the current value**
+            	 if (mode == 2) {
+            	 temp_red_time = red_time;
+            	 }
+            	 else if (mode == 3) {
+            	 temp_yellow_time = yellow_time;
+            	 }
+            	 else if (mode == 4) {
+            	 temp_green_time = green_time;
+            	 }
+
+            	 // Reset timers for the new mode
+            	 if (mode == 1) {
+            	 traffic_state = 0;
+            	 counter1 = green_time;
+            	 setTimer0(1000);
+            	 } else {
+            	 setTimer0(250); // For blinking
+            	 }
             }
-            break;
+        break;
 
         case BUTTON_PRESSED:
             if (!is_button_pressed(0)) {
